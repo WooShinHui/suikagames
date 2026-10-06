@@ -3,3 +3,4 @@ node_modules
 dist
 .cache
 .parcel-cache
+ssh-key-2025-12-24.key
