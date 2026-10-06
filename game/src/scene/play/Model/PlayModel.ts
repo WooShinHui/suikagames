@@ -26,9 +26,11 @@ export class PlayModel {
     private isWarningActive = false;
     private cooldown: ReturnType<typeof setTimeout> | null = null;
     private disposed = false;
+
     private readonly onMergeRequest = () => this.randomDoubleMerge();
     private readonly onTimeOut = (event: { data: string }) =>
         this.handleGameOver(event.data);
+
     constructor(private readonly physics: PlayPhysics) {
         for (let i = 0; i < 10; i++)
             this.beadOrder.push((Math.random() * 5) >> 0);
@@ -69,7 +71,7 @@ export class PlayModel {
             this.dropX,
             this.previewType(0),
             this.previewType(1),
-            false
+            false,
         );
     }
 
@@ -95,7 +97,7 @@ export class PlayModel {
                 type,
                 this.dropX,
                 this.physics.spawnY,
-                false
+                false,
             );
             this.bodies.set(body.label, body);
             this.droppingBeads.add(body.label);
@@ -104,7 +106,7 @@ export class PlayModel {
                 this.dropX,
                 this.previewType(0),
                 this.previewType(1),
-                true
+                true,
             );
             this.presentation?.playDrop();
             this.cooldown = setTimeout(() => {
@@ -160,7 +162,7 @@ export class PlayModel {
     private processMergePair(
         bodyA: Matter.Body,
         bodyB: Matter.Body,
-        removed: Set<string>
+        removed: Set<string>,
     ): boolean {
         if (removed.has(bodyA.label) || removed.has(bodyB.label)) return false;
         const type = (bodyA as FruitBody).typeX;
@@ -191,7 +193,7 @@ export class PlayModel {
             typeMap.get(body.typeX)!.push(body);
         }
         const available = Array.from(typeMap.entries()).filter(
-            ([, bodies]) => bodies.length >= 2
+            ([, bodies]) => bodies.length >= 2,
         );
         if (available.length === 0) {
             this.presentation?.showMergeUnavailable();
@@ -222,7 +224,7 @@ export class PlayModel {
     }
 
     private handleCollisionStart = (
-        event: Matter.IEventCollision<Matter.Engine>
+        event: Matter.IEventCollision<Matter.Engine>,
     ): void => {
         for (const { bodyA, bodyB } of event.pairs) {
             const isWall = (body: Matter.Body) =>

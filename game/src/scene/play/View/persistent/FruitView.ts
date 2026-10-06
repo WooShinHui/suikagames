@@ -4,6 +4,7 @@ import type { FruitBody } from '../../engine/PlayPhysics';
 export class FruitView extends ContainerX {
     private clips = new Map<string, createjs.MovieClip>();
     private faceTimers = new Set<ReturnType<typeof setTimeout>>();
+
     public addFruit(body: FruitBody, merged: boolean): void {
         const clip = this.resource.getLibrary('circle_2', `bead_${body.typeX}`);
         clip.x = body.position.x;
@@ -14,7 +15,7 @@ export class FruitView extends ContainerX {
         else
             createjs.Tween.get(clip, { loop: -1, bounce: true }).to(
                 { rotation: 720, rotationDir: 1 },
-                1000
+                1000,
             );
     }
 

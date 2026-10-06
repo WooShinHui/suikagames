@@ -5,7 +5,7 @@
     },
     "source": "index.html",
     "scripts": {
-        "test:refactor": "node --test tests/play-model.test.cjs tests/result.test.cjs",
+        "test:refactor": "node --test tests/play-model.test.cjs tests/play-controller.test.cjs tests/result.test.cjs",
         "start": "parcel index.html",
         "build": "parcel build index.html --no-minify",
         "remove": "remove.bat",

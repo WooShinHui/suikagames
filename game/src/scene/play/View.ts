@@ -3,7 +3,6 @@ import { EVT_HUB_SAFE } from '../../events/SafeEventHub';
 import { G_EVT } from '../../events/EVT_HUB';
 import { SoundMgr } from '../../manager/SoundMgr';
 import { FRUIT_SOUNDS } from './Model/PlayRules';
-import type { PlayModel } from './Model/PlayModel';
 import type { PlayPresentation } from './Model/PlayPresentation';
 import type { FruitBody } from './engine/PlayPhysics';
 import { BackgroundView } from './View/persistent/BackgroundView';
@@ -37,10 +36,9 @@ class View extends ContainerX implements PlayPresentation {
     private readonly warningOverlay: WarningOverlay;
     private readonly randomMerge: RandomMerge;
     private disposed = false;
-    private readonly onTick = () => this.model.update();
     private readonly onOpenOption = () => this.option.open();
 
-    constructor(private readonly model: PlayModel) {
+    constructor(isGameActive: () => boolean) {
         super();
         (window as any).currentGameView = this;
 
@@ -62,16 +60,11 @@ class View extends ContainerX implements PlayPresentation {
         this.option = new Option(this.scoreDisplay);
 
         this.applySavedSoundSettings();
-        this.warningOverlay = new WarningOverlay(this);
+        this.warningOverlay = new WarningOverlay(isGameActive);
         this.randomMerge = new RandomMerge();
-
-        model.setPresentation(this);
-        this.addEventListener('tick', this.onTick);
 
         EVT_HUB_SAFE.on(G_EVT.MENU.INGAME_OPEN_OPTION, this.onOpenOption);
     }
-
-    public interaction_DOWN(_x: number, _y: number): void {}
 
     private applySavedSoundSettings(): void {
         const bgm = localStorage.getItem('bgmVolume');
@@ -83,41 +76,9 @@ class View extends ContainerX implements PlayPresentation {
         SoundMgr.handle.sfxMuted = localStorage.getItem('sfxMuted') === 'true';
     }
 
-    public interaction_MOVE(x: number, y: number): void {
-        if (!this.stage) return;
-        this.model.move(this.stage.globalToLocal(x, y).x);
-    }
-
-    public interaction_UP(_x: number, _y: number): void {
-        if (this.stage) this.model.drop();
-    }
-
-    public startGame(): void {
-        this.model.startGame();
-    }
-
-    public stopGame(): void {
-        this.model.stopGame();
-    }
-
-    public handleGameOver(mode: string): void {
-        this.model.handleGameOver(mode);
-    }
-
-    public randomDoubleMerge(): void {
-        this.model.randomDoubleMerge();
-    }
-
-    public debugSpawnMaxPhase(): void {
-        this.model.debugSpawnMaxPhase();
-    }
-
-    public get getCanMerged(): boolean {
-        return this.model.canMerge;
-    }
-
-    public get getbActive(): boolean {
-        return this.model.isActive;
+    public getInputX(x: number, y: number): number | null {
+        if (!this.stage) return null;
+        return this.stage.globalToLocal(x, y).x;
     }
 
     public addFruit(body: FruitBody, merged: boolean): void {
@@ -177,7 +138,6 @@ class View extends ContainerX implements PlayPresentation {
     public dispose(): void {
         if (this.disposed) return;
         this.disposed = true;
-        this.removeEventListener('tick', this.onTick);
         EVT_HUB_SAFE.off(G_EVT.MENU.INGAME_OPEN_OPTION, this.onOpenOption);
         this.fruitView.dispose();
         this.baseLine.dispose();

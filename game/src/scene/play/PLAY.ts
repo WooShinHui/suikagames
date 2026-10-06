@@ -40,9 +40,10 @@ class PLAY extends SceneX {
         EVT_HUB_SAFE.on(G_EVT.LOGIN.LOGIN_SUCCESS, this.onLoginSuccess);
         const physics = new PlayPhysics();
         this.model = new PlayModel(physics);
-        this.view = new View(this.model);
+        this.view = new View(() => this.model?.isActive ?? false);
+        this.model.setPresentation(this.view);
         this.addChild(this.view);
-        this.controller = new Controller(this.view);
+        this.controller = new Controller(this.view, this.model);
         this.startNewGameSession()
             .catch((error) =>
                 console.error('세션 초기화 실패, 게임은 계속:', error)

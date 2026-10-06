@@ -1,13 +1,12 @@
 import PureDomX from '../../../../core/PureDomX';
 import { EVT_HUB_SAFE } from '../../../../events/SafeEventHub';
 import { G_EVT } from '../../../../events/EVT_HUB';
-import View from '../../View';
 
 export class WarningOverlay extends PureDomX {
     private isActive = false;
     private pulseStyle: HTMLStyleElement;
 
-    constructor(private _view: View) {
+    constructor(private readonly isGameActive: () => boolean) {
         super(document.createElement('div'));
 
         // ✅ Canvas parent에 직접 추가
@@ -75,7 +74,7 @@ export class WarningOverlay extends PureDomX {
     }
 
     private show = () => {
-        if (!this._view.getbActive) return;
+        if (!this.isGameActive()) return;
         if (this.isActive) return;
         this.isActive = true;
         this.htmlElement.style.opacity = '1';
