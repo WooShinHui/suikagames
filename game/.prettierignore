@@ -1,0 +1,10 @@
+node_modules
+dist
+.cache
+.parcel-cache
+js
+static
+docs/refactor/before-type-fix
+src/events/EVT_HUB.ts
+src/events/SafeEventHub.ts
+src/EVT.ts
